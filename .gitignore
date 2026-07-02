@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+
+# 模型权重与数据（请勿提交大文件）
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# 运行产物
+outputs/
+output/
+runs/
+*.log
+
+# 从 HuggingFace 下载的数据集（请勿提交）
+data/
+dataset/data/

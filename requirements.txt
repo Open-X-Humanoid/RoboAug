@@ -1,0 +1,43 @@
+# 注意：GroundingDINO 与 SAM 2 不在此列出，请按 README 从其官方仓库单独安装：
+#   pip install git+https://github.com/IDEA-Research/GroundingDINO.git
+#   pip install git+https://github.com/facebookresearch/sam2.git
+
+# 核心深度学习框架（请按你的 CUDA 版本安装匹配的 torch / torchvision）
+torch
+torchvision
+
+# 生成 / 检测 / 分割模型相关
+# 注意：diffusers 与 transformers 需锁版本。GroundingDINO 依赖较旧的 transformers API
+# （过新会报 BertModel.get_head_mask 缺失），而过新的 diffusers 又要求更高版本的
+# transformers，二者冲突；下面这组版本经过验证可同时兼容 GroundingDINO 与 SD3。
+diffusers==0.30.0
+transformers==4.44.2
+sentencepiece            # SD3 的 T5 tokenizer 需要
+accelerate               # 加速 / 降内存加载大模型
+huggingface_hub
+timm
+addict
+supervision
+yapf
+
+# CLIP（OpenAI 官方实现，用于特征匹配）
+# pip install git+https://github.com/openai/CLIP.git
+clip @ git+https://github.com/openai/CLIP.git
+
+# 图像 / 数据处理
+numpy
+opencv-python
+Pillow
+matplotlib
+pycocotools
+PyYAML
+h5py
+tqdm
+
+# 其他工具
+onnxruntime
+requests
+setuptools
+termcolor
+nltk
+fairscale

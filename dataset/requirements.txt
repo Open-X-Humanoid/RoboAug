@@ -1,0 +1,8 @@
+# Dependencies for the UR real-robot HDF5 loader (src/read_h5.py, ReadH5Files).
+numpy>=1.21
+h5py>=3.0
+opencv-python>=4.5
+Pillow>=8.0
+
+# The annotation dataset is plain JPEG + LabelMe JSON and needs no extra
+# packages to read (the Python standard library `json` module is enough).
