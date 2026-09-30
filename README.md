@@ -3,7 +3,11 @@
 **RoboAug: One Annotation to Hundreds of Scenes via Region-Contrastive Data
 Augmentation for Robotic Manipulation**
 
-[Project page](https://x-roboaug.github.io) · [arXiv:2602.14032](https://arxiv.org/abs/2602.14032)
+**CoRL 2026** · [Project page](https://x-roboaug.github.io) · [arXiv:2602.14032](https://arxiv.org/abs/2602.14032) · [Datasets](https://huggingface.co/datasets/X-Humanoid/RoboAug-Datasets)
+
+## News
+
+- **[2026-09]** RoboAug has been accepted to **CoRL 2026**!
 
 RoboAug is a **region-contrastive data augmentation framework** that improves the
 generalization of visuomotor / VLA policies against out-of-distribution (OOD)
@@ -282,9 +286,10 @@ separately) under their own licenses; see
 If you use this code or the datasets in your research, please cite:
 
 ```bibtex
-@misc{wang2026roboaugannotationhundredsscenes,
+@inproceedings{wang2026roboaugannotationhundredsscenes,
       title={RoboAug: One Annotation to Hundreds of Scenes via Region-Contrastive Data Augmentation for Robotic Manipulation}, 
       author={Xinhua Wang and Kun Wu and Zhen Zhao and Hu Cao and Yinuo Zhao and Zhiyuan Xu and Meng Li and Shichao Fan and Di Wu and Yixue Zhang and Ning Liu and Zhengping Che and Jian Tang},
+      booktitle={Conference on Robot Learning (CoRL)},
       year={2026},
       eprint={2602.14032},
       archivePrefix={arXiv},

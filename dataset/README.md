@@ -2,7 +2,7 @@
 
 These datasets accompany the paper **RoboAug: One Annotation to Hundreds of
 Scenes via Region-Contrastive Data Augmentation for Robotic Manipulation**
-([arXiv:2602.14032](https://arxiv.org/abs/2602.14032)). RoboAug is a generative
+(CoRL 2026, [arXiv:2602.14032](https://arxiv.org/abs/2602.14032)). RoboAug is a generative
 data-augmentation framework that needs only the bounding-box annotation of a
 single image during training, and was evaluated on three real robots — UR-5e,
 AgileX, and Tien Kung 2.0. The datasets below correspond to those annotations
@@ -154,9 +154,10 @@ The dataset and code are released under the **Apache License 2.0**; see
 If you use this dataset in your research, please cite:
 
 ```bibtex
-@misc{wang2026roboaugannotationhundredsscenes,
+@inproceedings{wang2026roboaugannotationhundredsscenes,
       title={RoboAug: One Annotation to Hundreds of Scenes via Region-Contrastive Data Augmentation for Robotic Manipulation}, 
       author={Xinhua Wang and Kun Wu and Zhen Zhao and Hu Cao and Yinuo Zhao and Zhiyuan Xu and Meng Li and Shichao Fan and Di Wu and Yixue Zhang and Ning Liu and Zhengping Che and Jian Tang},
+      booktitle={Conference on Robot Learning (CoRL)},
       year={2026},
       eprint={2602.14032},
       archivePrefix={arXiv},
