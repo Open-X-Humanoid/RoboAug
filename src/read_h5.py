@@ -16,10 +16,16 @@ class ReadH5Files():
         self.arms = robot_infor['arms']
         self.robot_infor = robot_infor['controls']
         self.default_demo = robot_infor.get('default_demo', None)
+        # Stored JPEGs decode to BGR with OpenCV; the augmentation pipeline relies on that default.
+        self.to_rgb = robot_infor.get('to_rgb', False)
+
+    def _decode_rgb(self, buf):
+        img = cv2.imdecode(buf, cv2.IMREAD_COLOR)
+        return cv2.cvtColor(img, cv2.COLOR_BGR2RGB) if self.to_rgb else img
 
     def decoder_image(self, camera_rgb_images, camera_depth_images):
         if type(camera_rgb_images[0]) is np.uint8:
-            rgb = cv2.imdecode(camera_rgb_images, cv2.IMREAD_COLOR)
+            rgb = self._decode_rgb(camera_rgb_images)
             if camera_depth_images is not None:
                 depth_array = np.frombuffer(camera_depth_images, dtype=np.uint8)
                 depth = cv2.imdecode(depth_array, cv2.IMREAD_UNCHANGED)
@@ -31,7 +37,7 @@ class ReadH5Files():
             rgb_images = []
             depth_images = []
             for idx, camera_rgb_image in enumerate(camera_rgb_images):
-                rgb = cv2.imdecode(camera_rgb_image, cv2.IMREAD_COLOR)
+                rgb = self._decode_rgb(camera_rgb_image)
                 if camera_depth_images is not None:
                     depth_array = np.frombuffer(camera_depth_images[idx], dtype=np.uint8)
                     depth = cv2.imdecode(depth_array, cv2.IMREAD_UNCHANGED)
@@ -162,6 +168,24 @@ class ReadH5Files():
 
         return rgb_images_dict, depth_images_dict, masked_rgb_dict
 
+    def _resolve_obs_group(self, root):
+        """Locate the observation group and the rgb/depth sensor names actually present.
+
+        Two layouts exist in the wild:
+          observations/{rgb_images,depth_images}/{cam}
+          camera_observations/{color_images,depth_images}/{cam}
+        """
+        for group_name in ('observations', 'camera_observations'):
+            if group_name not in root:
+                continue
+            group = root[group_name]
+            rgb_key = next((k for k in (self.camera_sensors[0], 'rgb_images', 'color_images') if k in group), None)
+            if rgb_key is None:
+                continue
+            depth_key = next((k for k in (self.camera_sensors[1], 'depth_images') if k in group), None)
+            return group, rgb_key, depth_key
+        return None, None, None
+
     def execute(self, file_path, camera_frame=None, control_frame=None):
         rgb_images_dict = {}
         depth_images_dict = {}
@@ -173,8 +197,24 @@ class ReadH5Files():
             if new_fmt is not None:
                 return new_fmt
 
+            obs_group, rgb_key, depth_key = self._resolve_obs_group(root)
+
             for cam_name in self.camera_names:
-                if 'observations' in root:
+                if obs_group is not None and cam_name in obs_group[rgb_key]:
+                    rgb_src = obs_group[rgb_key][cam_name]
+                    depth_src = obs_group[depth_key][cam_name] if depth_key else None
+                    if camera_frame is not None:
+                        decode_rgb, decode_depth = self.decoder_image(
+                            camera_rgb_images=rgb_src[camera_frame],
+                            camera_depth_images=depth_src[camera_frame] if depth_src is not None else None)
+                    else:
+                        decode_rgb, decode_depth = self.decoder_image(
+                            camera_rgb_images=rgb_src[:],
+                            camera_depth_images=depth_src[:] if depth_src is not None else None)
+
+                    rgb_images_dict[cam_name] = decode_rgb
+                    depth_images_dict[cam_name] = decode_depth
+                elif 'observations' in root:
                     if camera_frame is not None:
                         decode_rgb, decode_depth = self.decoder_image(
                             camera_rgb_images=root['observations'][self.camera_sensors[0]][cam_name][camera_frame],
@@ -473,7 +513,8 @@ if __name__ == '__main__':
     robot_infor = {'camera_names': camera_names,
                    'camera_sensors': ['rgb_images','depth_images'],
                    'arms': ['master', 'puppet'],
-                   'controls': ['joint_position']}
+                   'controls': ['joint_position'],
+                   'to_rgb': True}
 
     read_h5files = ReadH5Files(robot_infor)
     rgb_images_dict, depth_images_dict, masked_rgb_dict = read_h5files.execute(file_path=file_path, camera_frame=camera_frame)

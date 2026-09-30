@@ -110,7 +110,7 @@ field-by-field comparison.
 # Decode one episode and dump the frames as PNG images (run from the repo root)
 python src/read_h5.py \
     --camera_names "camera_front,camera_left,camera_top,camera_wrist_left" \
-    --file_path data/Single_Arm_UR_5e/ur_put_corn_into_the_pot/success_episodes/train/0307_154247/data/trajectory.hdf5 \
+    --file_path data/Single_Arm_UR_5e/ur_put_corn_into_the_pot/success_episodes/0307_154247/data/trajectory.hdf5 \
     --save_dir ./out
 ```
 
@@ -122,10 +122,11 @@ robot_infor = {
     "camera_sensors": ["rgb_images", "depth_images"],
     "arms": ["master", "puppet"],
     "controls": ["joint_position"],
+    "to_rgb": True,   # default False returns OpenCV BGR arrays
 }
 reader = ReadH5Files(robot_infor)
 rgb, depth, masked = reader.execute(file_path="<path>/trajectory.hdf5")
-print(rgb["camera_front"].shape)   # (T, H, W, 3)
+print(rgb["camera_front"].shape)   # (T, H, W, 3), RGB
 ```
 
 See [`robot_dataset/README.md`](robot_dataset/README.md) for details.
@@ -137,9 +138,11 @@ See [`robot_dataset/README.md`](robot_dataset/README.md) for details.
 | Dataset | Tasks | Scale | Annotations / labels | Format |
 |---------|-------|-------|----------------------|--------|
 | annotation_images | 35 tasks | ~76k images / ~73k annotation files | 47 object classes, all rectangular bboxes | JPEG + LabelMe JSON |
-| Single_Arm_UR_5e | 5 tasks | 799 demonstrations (train 719 / val 80) | language instruction + proprioception | per-episode HDF5 |
-| AgileX_Cobot_Magic_V2.0 | 5 tasks | ~275 demonstrations (train ~248 / val ~27) | language instruction + dual-arm proprioception | per-episode HDF5 |
-| Tien_Kung_2.0 | 5 tasks | ~280 demonstrations (train ~252 / val ~28) | dual-arm proprioception (no language) | per-episode HDF5 |
+| Single_Arm_UR_5e | 5 tasks | 789 demonstrations / 105,704 frames | language instruction + proprioception | per-episode HDF5 |
+| AgileX_Cobot_Magic_V2.0 | 5 tasks | 254 demonstrations / 97,359 frames | language instruction + dual-arm proprioception | per-episode HDF5 |
+| Tien_Kung_2.0 | 5 tasks | 258 demonstrations / 45,670 frames | dual-arm proprioception (no language) | per-episode HDF5 |
+
+The robot datasets ship without a train/val split; each episode appears once.
 
 ---
 
